@@ -1,4 +1,38 @@
 # Getting started with the Elastic Stack and Docker Compose: Part 2
+
+## My Notes
+### Run Application with APM agent enabled
+```yml
+version: '3.8'
+
+networks:
+  default:
+    name: elastic
+    external: true
+
+services:
+  my-service:
+    image: my-service:latest
+    environment:
+      - ELASTIC_APM_SERVICE_NAME=my-service
+      - ELASTIC_APM_SERVER_URL=http://fleet-server:8200
+      - ELASTIC_APM_SECRET_TOKEN=supersecrettoken
+      - ELASTIC_APM_ENVIRONMENT=development
+      - ELASTIC_APM_LOG_ECS_REFORMATTING=OVERRIDE
+
+    ports:
+      - 9090:9090
+    labels:
+      - co.elastic.logs/json.keys_under_root=true
+      - co.elastic.logs/json.add_error_key=true
+      - co.elastic.logs/json.message_key=log
+
+```
+### Fleet settings need to be updated 
+- Follow the blog to do the required update in the fleet UI settings in Kibana. https://www.elastic.co/blog/getting-started-with-the-elastic-stack-and-docker-compose-part-2
+- This is caused as default elasticsearch configuration in the fleet server is pointing to localhost:9200, it supposed to be the elasticsearch docker service address https://es01:9200
+
+
 ## Elastic Agent, Fleet, and Elastic APM
 
 This repo is in reference to the blog [Getting Started with the Elastic Stack and Docker Compose: Part 2](https://www.elastic.co/blog/getting-started-with-the-elastic-stack-and-docker-compose-part-2)
